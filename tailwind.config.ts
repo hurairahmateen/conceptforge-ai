@@ -8,9 +8,16 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        serif: ["Playfair Display", "serif"],
+      },
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        arch: {
+          charcoal: "#1A1A1A",
+          slate: "#F8F9FA",
+          accent: "#2563EB",
+        },
       },
     },
   },

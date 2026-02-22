@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ConceptForge AI
+
+ConceptForge AI is a lightweight, AI-powered web application for early-stage architectural concept ideation. It helps architects generate deep design philosophies, material palettes, and zoning strategies based on simple inputs like project type, location, and stylistic preferences.
+
+## Features
+- **Configurable LLM Backends**: Seamlessly toggle between Google's Gemini-2.5-flash and OpenAI's GPT-4o-mini inside the user interface.
+- **Architectural Outputs**: Get highly structured JSON responses providing zoning breakdowns, material palettes, and conceptual overviews.
+- **Modern UI**: Polished, fully responsive UI built with Tailwind CSS, Next.js 14 App Router, and motion/react micro-animations.
+
+## Prerequisites
+- Node.js 18.x or later.
+- API keys from [Google AI Studio](https://aistudio.google.com/) and/or [OpenAI](https://platform.openai.com/api-keys).
 
 ## Getting Started
 
-First, run the development server:
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. **Configure API Keys**
+   Configure your environment variables in `.env.local` located in the root of the project:
+   ```env
+   GEMINI_API_KEY=your_gemini_api_key_here
+   OPENAI_API_KEY=your_openai_api_key_here
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. **Run the Development Server**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Tech Stack
+- **Next.js 14 (App Router)**
+- **TypeScript**
+- **Tailwind CSS**
+- **Lucide React**
+- **Motion (Framer Motion)**
+- **@google/genai** SDK & **openai** SDK
