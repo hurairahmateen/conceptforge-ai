@@ -19,8 +19,9 @@ export async function generateConceptAction(data: ConceptFormData): Promise<Arch
     `;
 
     if (data.llmProvider === "gemini") {
-        if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured in .env.local.");
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        const apiKey = data.apiKey || process.env.GEMINI_API_KEY;
+        if (!apiKey) throw new Error("GEMINI_API_KEY is not configured and no custom API key was provided.");
+        const ai = new GoogleGenAI({ apiKey });
 
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
@@ -53,8 +54,9 @@ export async function generateConceptAction(data: ConceptFormData): Promise<Arch
         }
         return JSON.parse(response.text) as ArchitecturalConcept;
     } else {
-        if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured in .env.local.");
-        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const apiKey = data.apiKey || process.env.OPENAI_API_KEY;
+        if (!apiKey) throw new Error("OPENAI_API_KEY is not configured and no custom API key was provided.");
+        const openai = new OpenAI({ apiKey });
 
         const completion = await openai.chat.completions.create({
             model: "gpt-4o-mini",

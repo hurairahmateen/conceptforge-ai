@@ -9,9 +9,10 @@ interface ConceptFormProps {
     onBack: () => void;
     onSubmit: (data: ConceptFormData) => Promise<void>;
     isLoading: boolean;
+    error?: string | null;
 }
 
-export default function ConceptForm({ onBack, onSubmit, isLoading }: ConceptFormProps) {
+export default function ConceptForm({ onBack, onSubmit, isLoading, error }: ConceptFormProps) {
     const [formData, setFormData] = useState<ConceptFormData>({
         projectType: 'Residential',
         siteArea: '',
@@ -106,7 +107,7 @@ export default function ConceptForm({ onBack, onSubmit, isLoading }: ConceptForm
                         <input
                             type="text"
                             placeholder="e.g. Coastal Mediterranean, Arid Desert, Urban Dense"
-                            className="input-field pl-11"
+                            className="input-field !pl-11"
                             value={formData.location}
                             onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                             required
@@ -153,6 +154,23 @@ export default function ConceptForm({ onBack, onSubmit, isLoading }: ConceptForm
                         onChange={(e) => setFormData({ ...formData, additionalNotes: e.target.value })}
                     />
                 </div>
+
+                <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-black/60">Custom API Key (Optional)</label>
+                    <input
+                        type="password"
+                        placeholder={`Your ${formData.llmProvider === 'gemini' ? 'Gemini' : 'OpenAI'} API Key... (Leave blank to use app default)`}
+                        className="input-field"
+                        value={formData.apiKey || ''}
+                        onChange={(e) => setFormData({ ...formData, apiKey: e.target.value })}
+                    />
+                </div>
+
+                {error && (
+                    <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm">
+                        {error}
+                    </div>
+                )}
 
                 <button
                     type="submit"

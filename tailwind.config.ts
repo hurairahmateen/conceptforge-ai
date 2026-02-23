@@ -17,6 +17,7 @@ const config: Config = {
           charcoal: "#1A1A1A",
           slate: "#F8F9FA",
           accent: "#2563EB",
+          cream: "#FCFBF8",
         },
       },
     },

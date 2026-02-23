@@ -5,7 +5,7 @@
 
 @layer base {
     body {
-        @apply font-sans text-arch-charcoal bg-white antialiased;
+        @apply font-sans text-arch-charcoal bg-arch-cream antialiased;
     }
 
     h1,

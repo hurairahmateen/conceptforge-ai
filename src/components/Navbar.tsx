@@ -3,11 +3,14 @@
 import React from 'react';
 import { Compass } from 'lucide-react';
 
+export type ViewState = 'landing' | 'form' | 'results' | 'showcase' | 'methodology' | 'pricing';
+
 interface NavbarProps {
-    onNavigate: (view: 'landing' | 'form' | 'results') => void;
+    onNavigate: (view: ViewState) => void;
+    currentView?: ViewState;
 }
 
-export default function Navbar({ onNavigate }: NavbarProps) {
+export default function Navbar({ onNavigate, currentView }: NavbarProps) {
     return (
         <nav className="fixed top-0 w-full z-50 px-6 py-6 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-black/5">
             <div
@@ -20,9 +23,9 @@ export default function Navbar({ onNavigate }: NavbarProps) {
                 <span className="font-serif text-xl font-bold tracking-tight">ConceptForge AI</span>
             </div>
             <div className="hidden md:flex items-center gap-8 text-sm font-medium text-black/60">
-                <a href="#" className="hover:text-black transition-colors">Showcase</a>
-                <a href="#" className="hover:text-black transition-colors">Methodology</a>
-                <a href="#" className="hover:text-black transition-colors">Pricing</a>
+                <button onClick={() => onNavigate('showcase')} className={`hover:text-black transition-colors ${currentView === 'showcase' ? 'text-black font-bold' : ''}`}>Showcase</button>
+                <button onClick={() => onNavigate('methodology')} className={`hover:text-black transition-colors ${currentView === 'methodology' ? 'text-black font-bold' : ''}`}>Methodology</button>
+                <button onClick={() => onNavigate('pricing')} className={`hover:text-black transition-colors ${currentView === 'pricing' ? 'text-black font-bold' : ''}`}>Pricing</button>
             </div>
             <button
                 onClick={() => onNavigate('form')}

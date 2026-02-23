@@ -6,6 +6,7 @@ export interface ConceptFormData {
     designStyle: string;
     additionalNotes: string;
     llmProvider: 'gemini' | 'openai';
+    apiKey?: string;
 }
 
 export interface ArchitecturalConcept {

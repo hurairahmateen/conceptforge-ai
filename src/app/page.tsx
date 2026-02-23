@@ -2,37 +2,67 @@
 
 import React, { useState } from 'react';
 import { AnimatePresence } from 'motion/react';
-import Navbar from '@/components/Navbar';
+import Navbar, { ViewState } from '@/components/Navbar';
 import LandingHero from '@/components/LandingHero';
 import ConceptForm from '@/components/ConceptForm';
 import ConceptResults from '@/components/ConceptResults';
+import Showcase from '@/components/Showcase';
+import Methodology from '@/components/Methodology';
+import Pricing from '@/components/Pricing';
 import { generateConceptAction } from './actions';
 import { ConceptFormData, ArchitecturalConcept } from '@/types/concept';
 import { Compass } from 'lucide-react';
 
-type ViewState = 'landing' | 'form' | 'results';
-
 export default function Home() {
   const [view, setView] = useState<ViewState>('landing');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ArchitecturalConcept | null>(null);
   const [lastFormData, setLastFormData] = useState<ConceptFormData | null>(null);
 
   const handleNavigate = (newView: ViewState) => {
     setView(newView);
+    setError(null);
   };
 
   const handleGenerate = async (formData: ConceptFormData) => {
     setLoading(true);
+    setError(null);
     setLastFormData(formData);
     try {
       const concept = await generateConceptAction(formData);
       setResult(concept);
       setView('results');
-    } catch (error) {
-      console.error("Generation failed:", error);
-      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-      alert(`Failed to generate concept: ${errorMessage}`);
+    } catch (err) {
+      console.error("Generation failed:", err);
+      let errorMessage = "Unknown error occurred";
+
+      if (err instanceof Error) {
+        try {
+          // Attempt to parse raw JSON error strings from LLM providers
+          const parsed = JSON.parse(err.message);
+          if (parsed.error && typeof parsed.error.message === 'string') {
+            errorMessage = parsed.error.message;
+          } else {
+            errorMessage = err.message;
+          }
+        } catch {
+          // Not a JSON string
+          errorMessage = err.message;
+        }
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      }
+
+      // Sanitize specific known errors for better UX
+      const lowerError = errorMessage.toLowerCase();
+      if (lowerError.includes("api key not valid") || lowerError.includes("incorrect api key")) {
+        errorMessage = "Invalid API key provided. Please check your token and try again.";
+      } else if (lowerError.includes("429") || lowerError.includes("exceeded your current quota")) {
+        errorMessage = "API Quota Exceeded. Please check your plan and billing details, or provide a different API key.";
+      }
+
+      setError(`Failed to generate concept: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -45,8 +75,8 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white selection:bg-arch-accent/20">
-      <Navbar onNavigate={handleNavigate} />
+    <div className="min-h-screen bg-arch-cream selection:bg-arch-accent/20">
+      <Navbar onNavigate={handleNavigate} currentView={view} />
 
       <main className="pt-24 pb-20">
         <AnimatePresence mode="wait">
@@ -56,9 +86,13 @@ export default function Home() {
 
           {view === 'form' && (
             <ConceptForm
-              onBack={() => setView('landing')}
+              onBack={() => {
+                setView('landing');
+                setError(null);
+              }}
               onSubmit={handleGenerate}
               isLoading={loading}
+              error={error}
             />
           )}
 
@@ -70,6 +104,10 @@ export default function Home() {
               onRegenerate={handleRegenerate}
             />
           )}
+
+          {view === 'showcase' && <Showcase />}
+          {view === 'methodology' && <Methodology />}
+          {view === 'pricing' && <Pricing />}
         </AnimatePresence>
       </main>
 
