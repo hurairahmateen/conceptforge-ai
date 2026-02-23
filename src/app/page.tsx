@@ -16,6 +16,7 @@ import { Compass } from 'lucide-react';
 export default function Home() {
   const [view, setView] = useState<ViewState>('landing');
   const [loading, setLoading] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ArchitecturalConcept | null>(null);
   const [lastFormData, setLastFormData] = useState<ConceptFormData | null>(null);
@@ -70,7 +71,9 @@ export default function Home() {
 
   const handleRegenerate = async () => {
     if (lastFormData) {
-      await handleGenerate(lastFormData);
+      setIsRegenerating(true);
+      await handleGenerate(lastFormData); // handleGenerate already controls `loading` and catches errors
+      setIsRegenerating(false);
     }
   };
 
@@ -102,6 +105,7 @@ export default function Home() {
               formData={lastFormData}
               onBack={() => setView('form')}
               onRegenerate={handleRegenerate}
+              isRegenerating={isRegenerating}
             />
           )}
 

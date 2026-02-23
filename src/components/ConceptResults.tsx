@@ -2,20 +2,79 @@
 
 import React from 'react';
 import { motion } from 'motion/react';
-import { Compass, Layers, Maximize, Palette, Leaf, ChevronLeft, Copy, RefreshCw } from 'lucide-react';
+import { Compass, Layers, Maximize, Palette, Leaf, ChevronLeft, Copy, RefreshCw, Loader2, Download } from 'lucide-react';
 import { ArchitecturalConcept, ConceptFormData } from '@/types/concept';
+import { jsPDF } from 'jspdf';
 
 interface ConceptResultsProps {
     result: ArchitecturalConcept;
     formData: ConceptFormData;
     onBack: () => void;
     onRegenerate: () => void;
+    isRegenerating?: boolean;
 }
 
-export default function ConceptResults({ result, formData, onBack, onRegenerate }: ConceptResultsProps) {
+export default function ConceptResults({ result, formData, onBack, onRegenerate, isRegenerating = false }: ConceptResultsProps) {
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
         alert("Copied to clipboard!");
+    };
+
+    const handleExportPDF = () => {
+        const doc = new jsPDF();
+        const margin = 20;
+        let currentY = margin;
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const maxLineWidth = pageWidth - margin * 2;
+
+        // Helper to add text and auto-wrap, returning new Y
+        const addText = (text: string, x: number, y: number, fontSize: number, isBold = false) => {
+            doc.setFontSize(fontSize);
+            doc.setFont("helvetica", isBold ? "bold" : "normal");
+            const lines = doc.splitTextToSize(text, maxLineWidth);
+
+            // Check page break
+            if (y + (lines.length * fontSize * 0.4) > doc.internal.pageSize.getHeight() - margin) {
+                doc.addPage();
+                y = margin;
+            }
+
+            doc.text(lines, x, y);
+            return y + (lines.length * fontSize * 0.4) + 5; // Return next Y position
+        };
+
+        // Title
+        currentY = addText(result.conceptName, margin, currentY, 24, true);
+        currentY = addText(`Generated for your ${formData.projectType} project in ${formData.location}.`, margin, currentY + 5, 12, false);
+        currentY += 10;
+
+        // Sections
+        currentY = addText("Concept Overview", margin, currentY, 16, true);
+        currentY = addText(result.overview, margin, currentY, 11, false);
+        currentY += 5;
+
+        currentY = addText("Design Philosophy", margin, currentY, 16, true);
+        currentY = addText(result.designPhilosophy, margin, currentY, 11, false);
+        currentY += 5;
+
+        currentY = addText("Zoning Strategy", margin, currentY, 16, true);
+        result.zoningBreakdown.forEach(zone => {
+            currentY = addText(`• ${zone}`, margin, currentY, 11, false);
+        });
+        currentY += 5;
+
+        currentY = addText("Sustainability", margin, currentY, 16, true);
+        currentY = addText(result.sustainabilityNotes, margin, currentY, 11, false);
+        currentY += 5;
+
+        currentY = addText("Material Palette", margin, currentY, 16, true);
+        result.materialPalette.forEach(material => {
+            currentY = addText(`• ${material}`, margin, currentY, 11, false);
+        });
+
+        // Save
+        const filename = `${result.conceptName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_concept.pdf`;
+        doc.save(filename);
     };
 
     return (
@@ -41,12 +100,26 @@ export default function ConceptResults({ result, formData, onBack, onRegenerate 
                 <div className="flex gap-3">
                     <button
                         onClick={onRegenerate}
+                        disabled={isRegenerating}
                         className="btn-secondary flex items-center gap-2 py-3 px-6"
                     >
-                        <RefreshCw className="w-4 h-4" />
-                        Regenerate
+                        {isRegenerating ? (
+                            <>
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                Regenerating...
+                            </>
+                        ) : (
+                            <>
+                                <RefreshCw className="w-4 h-4" />
+                                Regenerate
+                            </>
+                        )}
                     </button>
-                    <button className="btn-primary flex items-center gap-2 py-3 px-6">
+                    <button
+                        onClick={handleExportPDF}
+                        className="btn-primary flex items-center gap-2 py-3 px-6"
+                    >
+                        <Download className="w-4 h-4" />
                         Export PDF
                     </button>
                 </div>
