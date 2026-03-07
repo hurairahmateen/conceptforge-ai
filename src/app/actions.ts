@@ -3,8 +3,11 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import OpenAI from "openai";
 import { ConceptFormData, ArchitecturalConcept } from "@/types/concept";
+import { createClient } from "@/utils/supabase/server";
 
 export async function generateConceptAction(data: ConceptFormData): Promise<ArchitecturalConcept> {
+    let conceptResult: ArchitecturalConcept;
+
     const prompt = `
     As a senior world-class architect, generate a comprehensive architectural concept based on the following project details:
     
@@ -52,7 +55,7 @@ export async function generateConceptAction(data: ConceptFormData): Promise<Arch
         if (!response.text) {
             throw new Error("Failed to generate content with Gemini.");
         }
-        return JSON.parse(response.text) as ArchitecturalConcept;
+        conceptResult = JSON.parse(response.text) as ArchitecturalConcept;
     } else {
         const apiKey = data.apiKey || process.env.OPENAI_API_KEY;
         if (!apiKey) throw new Error("OPENAI_API_KEY is not configured and no custom API key was provided.");
@@ -97,6 +100,25 @@ export async function generateConceptAction(data: ConceptFormData): Promise<Arch
             throw new Error("Failed to generate content with OpenAI.");
         }
 
-        return JSON.parse(resultText) as ArchitecturalConcept;
+        conceptResult = JSON.parse(resultText) as ArchitecturalConcept;
     }
+
+    try {
+        const supabase = await createClient();
+        const { data: authData } = await supabase.auth.getUser();
+
+        if (authData?.user) {
+            const { apiKey, ...safePromptData } = data;
+
+            await supabase.from('concepts').insert({
+                user_id: authData.user.id,
+                prompt_data: safePromptData,
+                generated_content: conceptResult,
+            });
+        }
+    } catch (dbErr) {
+        console.error("Failed to save concept to database:", dbErr);
+    }
+
+    return conceptResult;
 }
