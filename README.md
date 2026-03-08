@@ -73,12 +73,17 @@ npm install
 ```
 
 3. Configure Environment Variables
-Copy the example environment file and add your default API keys (if you want to bypass the BYOK frontend).
+Copy the example environment file to create your local environment instance:
 ```bash
 cp .env.example .env.local
 ```
-Then fill in `.env.local`:
+Then open `.env.local` and fill in your keys:
 ```env
+# Required for Auth & Database
+NEXT_PUBLIC_SUPABASE_URL="https://your-project-id.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key-here"
+
+# Optional (Defaults for the AI Generation)
 GEMINI_API_KEY="your_gemini_key_here"
 OPENAI_API_KEY="your_openai_key_here"
 ```
