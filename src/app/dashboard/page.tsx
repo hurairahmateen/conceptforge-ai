@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Compass, Calendar, ArrowRight } from 'lucide-react'
 import { ArchitecturalConcept, ConceptFormData } from '@/types/concept'
+import ApiKeySettings from '@/components/ApiKeySettings'
 
 export default async function DashboardPage() {
     const supabase = await createClient()
@@ -37,9 +38,13 @@ export default async function DashboardPage() {
 
             <main className="max-w-7xl mx-auto px-6 py-12">
                 <header className="mb-10">
-                    <h1 className="font-serif text-4xl font-bold mb-2">My Concepts</h1>
-                    <p className="text-black/50 text-lg">Your generated architectural narratives and design concepts.</p>
+                    <h1 className="font-serif text-4xl font-bold mb-2">My Dashboard</h1>
+                    <p className="text-black/50 text-lg">Manage your settings and view generated architectural narratives.</p>
                 </header>
+
+                <ApiKeySettings />
+
+                <h2 className="font-serif text-3xl font-bold mb-6 mt-12">My Concepts</h2>
 
                 {error && (
                     <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6">Failed to load concepts: {error.message}</div>

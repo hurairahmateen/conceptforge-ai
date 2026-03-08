@@ -25,7 +25,18 @@ export default function ConceptForm({ onBack, onSubmit, isLoading, error }: Conc
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        await onSubmit(formData);
+
+        let customKey = undefined;
+        if (formData.llmProvider === 'gemini') {
+            customKey = localStorage.getItem("gemini_api_key") || undefined;
+        } else if (formData.llmProvider === 'openai') {
+            customKey = localStorage.getItem("openai_api_key") || undefined;
+        }
+
+        await onSubmit({
+            ...formData,
+            apiKey: customKey
+        });
     };
 
     return (
@@ -152,17 +163,6 @@ export default function ConceptForm({ onBack, onSubmit, isLoading, error }: Conc
                         className="input-field min-h-[80px] resize-none"
                         value={formData.additionalNotes}
                         onChange={(e) => setFormData({ ...formData, additionalNotes: e.target.value })}
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-black/60">Custom API Key (Optional)</label>
-                    <input
-                        type="password"
-                        placeholder={`Your ${formData.llmProvider === 'gemini' ? 'Gemini' : 'OpenAI'} API Key... (Leave blank to use app default)`}
-                        className="input-field"
-                        value={formData.apiKey || ''}
-                        onChange={(e) => setFormData({ ...formData, apiKey: e.target.value })}
                     />
                 </div>
 
