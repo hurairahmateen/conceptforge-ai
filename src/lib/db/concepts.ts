@@ -1,3 +1,7 @@
+/**
+ * Database Interaction Module
+ * Contains specific repository functions for interacting with the Supabase database.
+ */
 import { createClient } from "@/utils/supabase/server";
 import { ConceptFormData, ArchitecturalConcept } from "@/types/concept";
 
@@ -9,7 +13,7 @@ export async function saveConceptToDatabase(
     try {
         const supabase = await createClient();
 
-        // Remove the api key before saving to DB for security/cleanliness
+        // Remove the api key before saving to DB to ensure secrets are never stored
         const { apiKey, ...safePromptData } = promptData;
 
         const { error } = await supabase.from('concepts').insert({
@@ -23,8 +27,8 @@ export async function saveConceptToDatabase(
             throw new Error("Failed to insert concept into database");
         }
     } catch (dbErr) {
-        // We log the error but don't typically want to crash the whole request 
-        // if the generation succeeded but the save failed, though this depends on precise requirements.
+        // We log the error but do not crash the request
+        // to ensure the user still receives their generated concept on the frontend even if the save fails.
         console.error("Failed to save concept to database:", dbErr);
     }
 }
