@@ -1,6 +1,6 @@
 # ConceptForge AI
 
-An AI-powered architectural concept ideation tool built with Next.js 14, Tailwind CSS, and the Google Gemini / OpenAI APIs.
+An AI-powered architectural concept ideation tool built with Next.js 15, Supabase, Tailwind CSS, and the Google Gemini / OpenAI APIs.
 
 ConceptForge AI transforms project constraints (site area, location, client priorities, design style) into visionary architectural narratives. It acts as an early-stage ideation engine for architects and designers to rapidly synthesize contextual data and philosophical direction.
 
@@ -9,13 +9,24 @@ ConceptForge AI transforms project constraints (site area, location, client prio
 ### Landing Page
 ![Landing Page](./public/screenshots/conceptforge-ai-home.png)
 
+### User Onboarding & Auth
+![Onboarding](./public/screenshots/conceptforge-ai-onboarding.png)
+
 ### Concept Generator Form
 ![Generator Form](./public/screenshots/conceptforge-ai-form.png)
+
+### Dashboard & History
+![Dashboard](./public/screenshots/conceptforge-ai-dashboard.png)
 
 ### Results Output & Export
 ![Results View](./public/screenshots/conceptforge-ai-result.png)
 
 ## ✨ Features
+
+**🔐 Secure Authentication & Storage**
+- Complete auth flow (Sign up, login, session management) powered by Supabase Auth
+- Concepts are securely saved to a cloud PostgreSQL database
+- View your entire architectural concept history on your personal Dashboard
 
 **🧠 Dual AI Engine**
 - Seamlessly toggle between Google's Gemini and OpenAI
@@ -25,9 +36,9 @@ ConceptForge AI transforms project constraints (site area, location, client prio
 - Guarantees standardized layouts using strict LLM schemas
 - Generates concept overviews, philosophies, material palettes, and zoning breakdowns
 
-**🔑 Bring Your Own Key (BYOK)**
-- Securely provide your own API key directly from the browser
-- Handled safely via Next.js Server Actions 
+**🔑 LocalStorage BYOK (Bring Your Own Key)**
+- Securely provide your own API key to bypass rate limits
+- Keys are saved locally in your browser's memory and are *never* stored in our database
 
 **📄 One-Click PDF Exports**
 - Generate cleanly formatted PDF reports of your architectural concepts
@@ -38,8 +49,8 @@ ConceptForge AI transforms project constraints (site area, location, client prio
 - Displays clean UI feedback instead of raw JSON stack traces
 
 **✨ Premium UI/UX**
-- A buttery-smooth, highly aesthetic interface
-- Crafted with Tailwind CSS and Framer Motion
+- Built on Next.js 15 App Router
+- A buttery-smooth, highly aesthetic interface crafted with Tailwind CSS and Framer Motion
 
 ## 🚀 Getting Started
 
